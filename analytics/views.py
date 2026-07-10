@@ -60,7 +60,7 @@ def dashboard_view(request):
                         "Complete data mismatch: missing or invalid values in key columns."
                     )
 
-                df = valid_df
+                df = valid_df.fillna("")
 
                 upload_log = FileUploadLog.objects.create(
                     user=request.user, file_name=file_name, status="SUCCESS"

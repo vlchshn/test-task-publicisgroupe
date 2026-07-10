@@ -10,21 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-rg07_aoca+@r1t#ozx#6y+1f%k957c#9^7s$*@^xatv!zgz(#z"
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-rg07_aoca+@r1t#ozx#6y+1f%k957c#9^7s$*@^xatv!zgz(#z")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = []
 
@@ -76,14 +79,16 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "publicis_db",
-        "USER": "postgres",
-        "PASSWORD": "1234",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": BASE_DIR / os.getenv("DB_NAME", "db.sqlite3"),
     }
 }
+
+if os.getenv("DB_ENGINE") == "django.db.backends.postgresql":
+    DATABASES["default"]["USER"] = os.getenv("DB_USER", "postgres")
+    DATABASES["default"]["PASSWORD"] = os.getenv("DB_PASSWORD", "")
+    DATABASES["default"]["HOST"] = os.getenv("DB_HOST", "127.0.0.1")
+    DATABASES["default"]["PORT"] = os.getenv("DB_PORT", "5432")
 
 
 # Password validation
